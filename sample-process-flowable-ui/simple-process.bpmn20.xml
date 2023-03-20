@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef" exporter="Flowable Open Source Modeler" exporterVersion="6.8.0">
+  <process id="simple-process" name="simple-process" isExecutable="true">
+    <startEvent id="create_documet" name="create_document" flowable:formFieldValidation="true"></startEvent>
+    <userTask id="review_document" name="review_documet" flowable:candidateGroups="reviewer" flowable:formFieldValidation="true">
+    </userTask>
+    <sequenceFlow id="sid-2D3569AF-20F1-4C1F-8E37-3E4EC2E7A7FB" sourceRef="create_documet" targetRef="review_document"></sequenceFlow>
+    <exclusiveGateway id="choice_review_document"></exclusiveGateway>
+    <sequenceFlow id="sid-7290EEDD-9D2C-44F5-B1B5-7BD788BE0CA6" sourceRef="review_document" targetRef="choice_review_document"></sequenceFlow>
+    <serviceTask id="service_upload_file" name="service_upload_file" flowable:class="com.hnp.flowableproject.service.UploadServiceTask"></serviceTask>
+    <serviceTask id="service_reject_file" name="service_reject_file" flowable:class="com.hnp.flowableproject.service.RejectServiceTask"></serviceTask>
+    <endEvent id="end_process" name="end_process"></endEvent>
+    <sequenceFlow id="sid-9D9BEB1B-4CA7-4E32-A6F0-2CC3F99A839B" sourceRef="service_upload_file" targetRef="end_process"></sequenceFlow>
+    <sequenceFlow id="sid-545E11D9-B494-473E-8AA5-62D274B70EC3" sourceRef="service_reject_file" targetRef="end_process"></sequenceFlow>
+    <sequenceFlow id="aprove_document" name="aprrove" sourceRef="choice_review_document" targetRef="service_upload_file">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approved}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="reject_document" name="reject" sourceRef="choice_review_document" targetRef="service_reject_file">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!approved}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+</definitions>
